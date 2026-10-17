@@ -39,6 +39,6 @@ export function Invitation({ startAt }: {startAt: InvitationPhase;}) {
       {phase === 'envelope' && <EnvelopeScene key="envelope" guestName={guest.name} onOpen={handleOpen} />}
       {phase === 'intro' && <IntroVideo key="intro" onDone={handleIntroDone} />}
       {phase === 'site' && <WeddingSite key="site" guest={guest} />}
-    </AnimatePresence>);
-
+    </AnimatePresence>
+  );
 }

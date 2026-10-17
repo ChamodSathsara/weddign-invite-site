@@ -1,9 +1,15 @@
+"use client";
+
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import dynamic from 'next/dynamic';
 import { MotionConfig } from 'framer-motion';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { MusicProvider } from './contexts/MusicContext';
-import { Invitation } from './pages/Invitation';
+
+const Invitation = dynamic(
+  () => import('./screens/Invitation').then((module) => module.Invitation),
+  { ssr: false }
+);
 
 interface AppProps {
   /** Preview helper: jump straight past the envelope and intro. */
@@ -15,12 +21,7 @@ export function App({ startAt = 'envelope' }: AppProps) {
     <MotionConfig reducedMotion="user">
       <LanguageProvider>
         <MusicProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/invite" element={<Invitation startAt={startAt} />} />
-              <Route path="*" element={<Invitation startAt={startAt} />} />
-            </Routes>
-          </BrowserRouter>
+          <Invitation startAt={startAt} />
         </MusicProvider>
       </LanguageProvider>
     </MotionConfig>);

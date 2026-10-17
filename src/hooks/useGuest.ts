@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 import { readGuestToken, sanitizeGuestName } from '../utils/guest';
 
 export interface Guest {
@@ -10,9 +10,9 @@ export interface Guest {
 }
 
 export function useGuest(): Guest {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   return useMemo(
-    () => ({ name: sanitizeGuestName(params.get('name')), token: readGuestToken(params.get('token')) }),
+    () => ({ name: sanitizeGuestName(params?.get('name') ?? null), token: readGuestToken(params?.get('token') ?? null) }),
     [params]
   );
 }
