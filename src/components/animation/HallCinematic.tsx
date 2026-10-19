@@ -15,7 +15,6 @@ export function HallCinematic() {
   const rootRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const startedRef = useRef(false);
   const [activeScene, setActiveScene] = useState(-1);
 
   useLayoutEffect(() => {
@@ -23,60 +22,65 @@ export function HallCinematic() {
     const video = videoRef.current;
     if (!root || !video) return;
 
-    const playVideo = () => {
-      if (startedRef.current) return;
-      startedRef.current = true;
-      setActiveScene(0);
-      video.play().catch(() => {
-        startedRef.current = false;
-      });
-    };
-
-    let timeline: gsap.core.Timeline;
+    video.pause();
+    let frame = 0;
+    let doorTimeline: gsap.core.Timeline;
     const ctx = gsap.context(() => {
       gsap.set('[data-door-caption]', { opacity: 1, y: 0 });
-      timeline = gsap.timeline({ paused: true })
+      doorTimeline = gsap.timeline({ paused: true })
         .to('[data-door-caption]', { opacity: 0, y: -22, duration: 0.4, ease: 'power1.in' }, 0.55)
         .to('[data-door="left"]', { rotateY: -112, duration: 1.7, ease: 'power2.inOut' }, 0.65)
         .to('[data-door="right"]', { rotateY: 112, duration: 1.7, ease: 'power2.inOut' }, 0.65)
-        .call(playVideo, [], 1.25)
         .to('[data-doors]', { autoAlpha: 0, duration: 0.45 }, 2.05);
     }, root);
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
-        if (timeline.progress() < 1) timeline.play();
-        if (startedRef.current) video.play().catch(() => undefined);
-      } else {
-        if (timeline.progress() < 1) timeline.pause();
-        video.pause();
-      }
-    }, { threshold: [0, 0.55] });
-    observer.observe(root);
+    const updateFromScroll = () => {
+      frame = 0;
+      const rect = root.getBoundingClientRect();
+      const scrollable = Math.max(root.offsetHeight - window.innerHeight, 1);
+      const scrollProgress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+
+      const doorProgress = Math.min(scrollProgress / 0.16, 1);
+      doorTimeline.progress(doorProgress);
+
+      const videoProgress = Math.min(Math.max((scrollProgress - 0.12) / 0.88, 0), 1);
+      const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : FALLBACK_DURATION;
+      const targetTime = videoProgress * duration;
+      if (Math.abs(video.currentTime - targetTime) > 0.025) video.currentTime = targetTime;
+
+      const sceneIndex = videoProgress > 0.015
+        ? Math.min(Math.floor(videoProgress * hallScenes.length), hallScenes.length - 1)
+        : -1;
+      setActiveScene((current) => current === sceneIndex ? current : sceneIndex);
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${videoProgress})`;
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateFromScroll);
+    };
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    video.addEventListener('loadedmetadata', requestUpdate);
+    requestUpdate();
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      video.removeEventListener('loadedmetadata', requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
       video.pause();
       ctx.revert();
     };
   }, []);
 
-  const syncVideo = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    const duration = Number.isFinite(video.duration) ? video.duration : FALLBACK_DURATION;
-    const progress = Math.min(video.currentTime / duration, 1);
-    const index = Math.min(Math.floor(progress * hallScenes.length), hallScenes.length - 1);
-    setActiveScene((current) => current === index ? current : index);
-    if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
-  };
-
   const activeId = activeScene >= 0 ? hallScenes[activeScene]?.id : null;
   const activeCopy = activeId ? m.hall.scenes[activeId] : null;
 
   return (
-    <section ref={rootRef} aria-label={m.hall.label} className="relative h-[100svh] w-full overflow-hidden bg-brown">
-      <video
+    <section ref={rootRef} aria-label={m.hall.label} className="relative h-[500svh] w-full bg-brown">
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-brown">
+        <video
         ref={videoRef}
         src={VIDEO_SRC}
         muted
@@ -84,8 +88,6 @@ export function HallCinematic() {
         preload="auto"
         disablePictureInPicture
         controls={false}
-        onTimeUpdate={syncVideo}
-        onLoadedMetadata={syncVideo}
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden="true"
       />
@@ -135,6 +137,7 @@ export function HallCinematic() {
 
       <div className="absolute inset-x-0 bottom-0 z-40 h-[3px] bg-ivory/20" aria-hidden="true">
         <div ref={progressRef} className="h-full origin-left scale-x-0 bg-gold" />
+      </div>
       </div>
     </section>
   );
