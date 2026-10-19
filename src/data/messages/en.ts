@@ -77,9 +77,29 @@ export const en = {
   story: {
     title: 'Our Story',
     subtitle: 'A few chapters of the journey that led us here.',
-    placeholderDate: 'Date to be added',
-    placeholderBody: 'Placeholder — the couple will add this memory.',
-    milestones: ['How We Met', 'Our First Adventure', 'The Proposal', 'Forever Begins']
+    milestones: [
+      {
+        date: '09 June 2016',
+        title: 'How We Met',
+        body: 'Our story began with a chance meeting touched by fate—the opening of the most beautiful chapter of our lives. We did not know it then, but that little meeting was the first step in a love story that would bind our lives together forever.'
+      },
+      {
+        date: '09 August 2016',
+        title: 'Our First Adventure',
+        body: 'Bellanwila Temple and its beautiful nearby gardens witnessed many unforgettable moments in our love story. That lovely day together, filled with laughter and happiness, remains an enduring memory in our hearts.'
+      },
+      {
+        date: '10 November 2026',
+        title: 'The Proposal',
+        body: 'The bond we lovingly nurtured through the years becomes a beautiful promise to remain together for a lifetime—a treasured moment that gives new meaning to our love story and will stay in our memories forever.'
+      },
+      {
+        date: '20 January 2027',
+        title: 'Forever Begins',
+        body: 'The bond we built with love for more than a decade is strengthened by the sacred promise of marriage. From this day forward, we begin our lifelong journey, sharing our dreams, our happiness, and every moment of life together.'
+      }
+    ],
+    quote: '“Our story began with a chance meeting and became the most beautiful love story written by destiny. From then until today, and from today until forever... we belong to each other.” ❤️'
   },
   gallery: {
     title: 'Moments',
