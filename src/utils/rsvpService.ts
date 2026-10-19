@@ -3,11 +3,21 @@ import { createRsvpSchema } from './rsvpSchema';
 import { isRsvpPastDeadline } from './countdown';
 import type { RsvpPayload, RsvpResult, SavedRsvp } from '../types/rsvp';
 
-const PREVIEW_KEY = 'sc-wedding:rsvp-preview';
+const PREVIEW_KEY = 'sc-wedding:rsvp-google-form';
+const GOOGLE_FORM_RESPONSE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSci4fS2eKxGnNbi668M52-uU-4-TrLHOj_Kk4Fc4TqIcO-G1g/formResponse';
+const GOOGLE_FORM_FIELDS = {
+  fullName: 'entry.794365108',
+  attending: 'entry.8693657',
+  guests: 'entry.1001770418'
+} as const;
+const ATTENDANCE_VALUES = {
+  accept: 'Joyfully Accept / සතුටින් සහභාගී වෙමි',
+  decline: 'Regretfully Decline / සහභාගී විය නොහැක'
+} as const;
 const COOLDOWN_MS = 8000;
 let lastSuccessAt = 0;
 
-export const rsvpMode: 'live' | 'preview' = wedding.rsvp.endpoint ? 'live' : 'preview';
+export const rsvpMode = 'live' as const;
 
 export function newIdempotencyKey(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
@@ -40,15 +50,8 @@ function readPreview(): SavedRsvp | null {
 
 /** Load an existing response. Live mode requires an opaque guest token, validated by the server. */
 export async function loadRsvp(token: string | null): Promise<SavedRsvp | null> {
-  if (rsvpMode === 'preview') return readPreview();
-  if (!token || !wedding.rsvp.endpoint) return null;
-  const res = await fetch(`${wedding.rsvp.endpoint}?token=${encodeURIComponent(token)}`, {
-    headers: { Accept: 'application/json' },
-    credentials: 'same-origin'
-  });
-  if (!res.ok) return null;
-  const data: unknown = await res.json();
-  return isSavedRsvp(data) ? data : null;
+  void token;
+  return readPreview();
 }
 
 interface SubmitOptions {
@@ -75,37 +78,23 @@ export async function submitRsvp(payload: RsvpPayload, opts: SubmitOptions): Pro
   // Bots fill hidden fields — drop silently without storing anything
   if (opts.honeypot) return { ok: true, data: { ...payload, updatedAt: new Date().toISOString() } };
 
-  if (rsvpMode === 'preview' || !wedding.rsvp.endpoint) {
-    await new Promise((r) => window.setTimeout(r, 650));
-    const saved: SavedRsvp = { ...payload, updatedAt: new Date().toISOString() };
-    try {
-      localStorage.setItem(PREVIEW_KEY, JSON.stringify(saved));
-    } catch {
-      return { ok: false, code: 'generic' };
-    }
-    lastSuccessAt = Date.now();
-    return { ok: true, data: saved };
-  }
-
   try {
-    const res = await fetch(wedding.rsvp.endpoint, {
-      method: opts.token ? 'PUT' : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Idempotency-Key': opts.idempotencyKey
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify({ ...payload, token: opts.token ?? undefined })
+    const formData = new URLSearchParams({
+      [GOOGLE_FORM_FIELDS.fullName]: payload.fullName,
+      [GOOGLE_FORM_FIELDS.attending]: ATTENDANCE_VALUES[payload.attending],
+      [GOOGLE_FORM_FIELDS.guests]: String(payload.attending === 'accept' ? payload.guests : 1)
     });
-    if (res.status === 429) return { ok: false, code: 'rate' };
-    if (res.status === 403 || res.status === 410) return { ok: false, code: 'closed' };
-    if (res.status === 401 || res.status === 404) return { ok: false, code: 'invalidToken' };
-    if (res.status === 400 || res.status === 422) return { ok: false, code: 'validation' };
-    if (!res.ok) return { ok: false, code: 'generic' };
-    const data: unknown = await res.json();
+    await fetch(GOOGLE_FORM_RESPONSE_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: formData.toString()
+    });
+
+    const data: SavedRsvp = { ...payload, updatedAt: new Date().toISOString() };
+    localStorage.setItem(PREVIEW_KEY, JSON.stringify(data));
     lastSuccessAt = Date.now();
-    return { ok: true, data: isSavedRsvp(data) ? data : { ...payload, updatedAt: new Date().toISOString() } };
+    return { ok: true, data };
   } catch {
     return { ok: false, code: 'network' };
   }

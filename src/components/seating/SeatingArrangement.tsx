@@ -7,7 +7,12 @@ import { useSearchParams } from 'next/navigation';
 import { seatingAssignments, seatingByTable, type SeatAssignment } from '../../data/seating';
 import { sanitizeGuestName } from '../../utils/guest';
 
-const normalize = (value: string) => value.trim().toLocaleLowerCase();
+const normalize = (value: string) => value
+  .normalize('NFC')
+  .trim()
+  .toLocaleLowerCase()
+  .replace(/^(?:(?:mr|mrs|miss|ms|mister|missis)\.?\s+)+/i, '')
+  .replace(/\s+/g, ' ');
 
 function TableMap({
   table,
