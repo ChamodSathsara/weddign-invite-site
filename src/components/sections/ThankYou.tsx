@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneIcon } from 'lucide-react';
+import { MessageCircleIcon, PhoneIcon } from 'lucide-react';
 import { useI18n } from '../../contexts/LanguageContext';
 import { assets, wedding } from '../../data/wedding';
 import { FloatingPetals } from '../animation/FloatingPetals';
@@ -47,20 +47,33 @@ export function ThankYou({ guestName }: { guestName: string | null }) {
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {wedding.contacts.map((contact) => (
-              <a
+              <div
                 key={contact.name}
-                href={`tel:${contact.phone}`}
-                aria-label={`Call ${contact.name} on ${contact.display}`}
-                className="group flex min-h-[64px] items-center justify-center gap-3 rounded-2xl border border-gold-soft bg-ivory/75 px-5 text-left shadow-sm transition-[transform,border-color,background-color] hover:border-gold hover:bg-ivory active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                className="rounded-2xl border border-gold-soft bg-ivory/75 p-4 text-left shadow-sm"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-champagne text-gold-deep transition-colors group-hover:bg-gold group-hover:text-brown">
-                  <PhoneIcon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                <span>
-                  <span className="block font-serif text-lg leading-tight text-brown">{contact.name}</span>
-                  <span className="mt-0.5 block text-sm tracking-[0.08em] text-brown-soft">{contact.display}</span>
-                </span>
-              </a>
+                <p className="font-serif text-xl leading-tight text-brown">{contact.name}</p>
+                <p className="mt-1 text-sm tracking-[0.08em] text-brown-soft">{contact.display}</p>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <a
+                    href={`tel:${contact.phone}`}
+                    aria-label={`Call ${contact.name} on ${contact.display}`}
+                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full border border-gold-soft bg-champagne px-3 text-sm font-medium text-brown transition-[transform,background-color] hover:bg-gold/25 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                  >
+                    <PhoneIcon className="h-4 w-4" aria-hidden="true" />
+                    {locale === 'si' ? 'Call' : 'Call'}
+                  </a>
+                  <a
+                    href={`https://wa.me/${contact.phone.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Message ${contact.name} on WhatsApp`}
+                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full bg-[#1f7a54] px-3 text-sm font-medium text-white transition-[transform,background-color] hover:bg-[#176344] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                  >
+                    <MessageCircleIcon className="h-4 w-4" aria-hidden="true" />
+                    WhatsApp
+                  </a>
+                </div>
+              </div>
             ))}
           </div>
         </div>
