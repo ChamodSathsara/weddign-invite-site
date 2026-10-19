@@ -9,7 +9,7 @@ import { LightParticles } from './LightParticles';
 const VIDEO_SRC = '/wedding-hall-complete-walkthrough.mp4';
 const FALLBACK_DURATION = 14.75;
 
-/** Opens the invitation doors, then plays the full hall walkthrough film. */
+/** Opens the invitation doors, then loops the full hall walkthrough film. */
 export function HallCinematic() {
   const { m } = useI18n();
   const rootRef = useRef<HTMLElement>(null);
@@ -52,7 +52,7 @@ export function HallCinematic() {
 
     const visibilityObserver = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        if (!video.ended) playVideo();
+        playVideo();
       } else {
         video.pause();
       }
@@ -113,6 +113,7 @@ export function HallCinematic() {
         <video
         ref={videoRef}
         muted
+        loop
         playsInline
         preload="none"
         disablePictureInPicture
