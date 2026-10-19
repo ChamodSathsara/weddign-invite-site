@@ -25,6 +25,14 @@ export function HallCinematic() {
     video.pause();
     let frame = 0;
     let doorTimeline: gsap.core.Timeline;
+    const loadObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || video.getAttribute('src')) return;
+      video.src = VIDEO_SRC;
+      video.load();
+      loadObserver.disconnect();
+    }, { rootMargin: '100% 0px' });
+    loadObserver.observe(root);
+
     const ctx = gsap.context(() => {
       gsap.set('[data-door-caption]', { opacity: 1, y: 0 });
       doorTimeline = gsap.timeline({ paused: true })
@@ -46,7 +54,7 @@ export function HallCinematic() {
       const videoProgress = Math.min(Math.max((scrollProgress - 0.12) / 0.88, 0), 1);
       const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : FALLBACK_DURATION;
       const targetTime = videoProgress * duration;
-      if (Math.abs(video.currentTime - targetTime) > 0.025) video.currentTime = targetTime;
+      if (video.readyState > 0 && Math.abs(video.currentTime - targetTime) > 0.025) video.currentTime = targetTime;
 
       const sceneIndex = videoProgress > 0.015
         ? Math.min(Math.floor(videoProgress * hallScenes.length), hallScenes.length - 1)
@@ -68,6 +76,7 @@ export function HallCinematic() {
       window.removeEventListener('scroll', requestUpdate);
       window.removeEventListener('resize', requestUpdate);
       video.removeEventListener('loadedmetadata', requestUpdate);
+      loadObserver.disconnect();
       if (frame) window.cancelAnimationFrame(frame);
       video.pause();
       ctx.revert();
@@ -82,10 +91,9 @@ export function HallCinematic() {
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-brown">
         <video
         ref={videoRef}
-        src={VIDEO_SRC}
         muted
         playsInline
-        preload="auto"
+        preload="none"
         disablePictureInPicture
         controls={false}
         className="absolute inset-0 h-full w-full object-cover"
