@@ -23,7 +23,7 @@ export const wedding = {
     deadlineISO: '2026-12-01T23:59:59+05:30',
     /** 'close' = form closes after deadline · 'allowLate' = still accepts, with a notice */
     deadlineMode: 'close' as 'close' | 'allowLate',
-    maxGuests: 4,
+    maxGuests: 6,
     /**
      * Your RSVP API (see docs/BACKEND.md). While null, the form runs in clearly
      * labelled preview mode and only stores the response on the guest's device.
