@@ -49,6 +49,7 @@ export const en = {
     personal: 'Dear {name},',
     body: 'Two hearts, two families, one beautiful beginning. With joy, we invite you to share the morning we become one.',
     cta: 'Explore Our Invitation',
+    seatingCta: 'Find Your Seat',
     portraitAlt: 'Illustration of Samanali and Chamod in traditional white wedding attire, smiling at each other'
   },
   countdown: {

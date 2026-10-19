@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, LocateFixedIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useI18n } from '../../contexts/LanguageContext';
 import { fmt } from '../../utils/format';
 import { scrollToSection } from '../../utils/scroll';
@@ -64,7 +65,7 @@ export function Hero({ guestName }: {guestName: string | null;}) {
             <Countdown align="start" />
           </motion.div>
 
-          <motion.div {...rise(0.25)} className="mt-9">
+          <motion.div {...rise(0.25)} className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center md:justify-start">
             <button
               type="button"
               onClick={() => scrollToSection('story')}
@@ -73,6 +74,12 @@ export function Hero({ guestName }: {guestName: string | null;}) {
               {m.hero.cta}
               <ChevronDownIcon className="h-4 w-4 transition-transform duration-150 ease-out-soft group-hover:translate-y-0.5" aria-hidden="true" />
             </button>
+            <Link
+              href="/seating-arangement"
+              className="inline-flex min-h-[52px] items-center gap-2 whitespace-nowrap rounded-full border border-gold bg-ivory/80 px-7 text-[15px] font-medium text-brown transition-[transform,background-color] duration-150 ease-out-soft hover:bg-champagne active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ivory">
+              <LocateFixedIcon className="h-4 w-4" aria-hidden="true" />
+              {m.hero.seatingCta}
+            </Link>
           </motion.div>
         </div>
 
