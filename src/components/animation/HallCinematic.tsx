@@ -24,6 +24,7 @@ export function HallCinematic() {
 
     video.pause();
     let frame = 0;
+    let doorIsOpen = false;
     let doorTimeline: gsap.core.Timeline;
     const loadObserver = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting || video.getAttribute('src')) return;
@@ -47,16 +48,13 @@ export function HallCinematic() {
         .to('[data-door-caption]', { opacity: 0, y: -22, duration: 0.4, ease: 'power1.in' }, 0.55)
         .to('[data-door="left"]', { rotateY: -112, duration: 1.7, ease: 'power2.inOut' }, 0.65)
         .to('[data-door="right"]', { rotateY: 112, duration: 1.7, ease: 'power2.inOut' }, 0.65)
-        .call(playVideo, [], 1.25)
         .to('[data-doors]', { autoAlpha: 0, duration: 0.45 }, 2.05);
     }, root);
 
     const visibilityObserver = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        if (doorTimeline.progress() < 1) doorTimeline.play();
-        else if (!video.ended) playVideo();
+        if (doorIsOpen && !video.ended) playVideo();
       } else {
-        if (doorTimeline.progress() < 1) doorTimeline.pause();
         video.pause();
       }
     }, { threshold: [0, 0.01] });
@@ -67,6 +65,16 @@ export function HallCinematic() {
       const rect = root.getBoundingClientRect();
       const scrollable = Math.max(root.offsetHeight - window.innerHeight, 1);
       const scrollProgress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+
+      const doorProgress = Math.min(scrollProgress / 0.16, 1);
+      doorTimeline.progress(doorProgress);
+      if (doorProgress >= 0.98 && !doorIsOpen) {
+        doorIsOpen = true;
+        playVideo();
+      } else if (doorProgress < 0.95 && doorIsOpen) {
+        doorIsOpen = false;
+        video.pause();
+      }
 
       const textProgress = Math.min(Math.max((scrollProgress - 0.04) / 0.92, 0), 1);
       const sceneIndex = textProgress > 0.01
