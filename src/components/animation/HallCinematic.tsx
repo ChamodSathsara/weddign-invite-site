@@ -24,7 +24,6 @@ export function HallCinematic() {
 
     video.pause();
     let frame = 0;
-    let doorIsOpen = false;
     let doorTimeline: gsap.core.Timeline;
     const loadObserver = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting || video.getAttribute('src')) return;
@@ -53,7 +52,7 @@ export function HallCinematic() {
 
     const visibilityObserver = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        if (doorIsOpen && !video.ended) playVideo();
+        if (!video.ended) playVideo();
       } else {
         video.pause();
       }
@@ -68,13 +67,6 @@ export function HallCinematic() {
 
       const doorProgress = Math.min(scrollProgress / 0.16, 1);
       doorTimeline.progress(doorProgress);
-      if (doorProgress >= 0.98 && !doorIsOpen) {
-        doorIsOpen = true;
-        playVideo();
-      } else if (doorProgress < 0.95 && doorIsOpen) {
-        doorIsOpen = false;
-        video.pause();
-      }
 
       const textProgress = Math.min(Math.max((scrollProgress - 0.04) / 0.92, 0), 1);
       const sceneIndex = textProgress > 0.01
