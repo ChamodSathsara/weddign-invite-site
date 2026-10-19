@@ -75,7 +75,7 @@ export function Hero({ guestName }: {guestName: string | null;}) {
               <ChevronDownIcon className="h-4 w-4 transition-transform duration-150 ease-out-soft group-hover:translate-y-0.5" aria-hidden="true" />
             </button>
             <Link
-              href="/seating-arangement"
+              href={guestName ? `/seating-arangement?name=${encodeURIComponent(guestName)}` : '/seating-arangement'}
               className="inline-flex min-h-[52px] items-center gap-2 whitespace-nowrap rounded-full border border-gold bg-ivory/80 px-7 text-[15px] font-medium text-brown transition-[transform,background-color] duration-150 ease-out-soft hover:bg-champagne active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ivory">
               <LocateFixedIcon className="h-4 w-4" aria-hidden="true" />
               {m.hero.seatingCta}

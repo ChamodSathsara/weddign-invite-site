@@ -1,9 +1,11 @@
 'use client';
 
-import React, { FormEvent, useMemo, useRef, useState } from 'react';
+import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeftIcon, SearchIcon, SparklesIcon, UsersIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { seatingAssignments, seatingByTable, type SeatAssignment } from '../../data/seating';
+import { sanitizeGuestName } from '../../utils/guest';
 
 const normalize = (value: string) => value.trim().toLocaleLowerCase();
 
@@ -69,10 +71,13 @@ function TableMap({
 }
 
 export function SeatingArrangement() {
+  const params = useSearchParams();
+  const personalizedName = sanitizeGuestName(params?.get('name') ?? null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<SeatAssignment | null>(null);
   const [notFound, setNotFound] = useState(false);
   const tableRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const personalizedSelectionDone = useRef(false);
 
   const suggestions = useMemo(() => {
     const value = normalize(query);
@@ -88,6 +93,16 @@ export function SeatingArrangement() {
     setNotFound(false);
     window.setTimeout(() => tableRefs.current[guest.table]?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
   };
+
+  useEffect(() => {
+    if (personalizedSelectionDone.current || !personalizedName) return;
+    personalizedSelectionDone.current = true;
+    const match = seatingAssignments.find((guest) => normalize(guest.name) === normalize(personalizedName));
+    setQuery(personalizedName);
+    if (!match) return;
+    setSelected(match);
+    window.setTimeout(() => tableRefs.current[match.table]?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+  }, [personalizedName]);
 
   const handleSearch = (event: FormEvent) => {
     event.preventDefault();
@@ -105,7 +120,7 @@ export function SeatingArrangement() {
     <main className="paper-texture min-h-screen bg-ivory text-brown">
       <header className="sticky top-0 z-[60] border-b border-gold-soft/70 bg-champagne/95 px-5 py-4 shadow-sm backdrop-blur md:px-10">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <Link href="/" className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 text-sm text-brown transition-colors hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
+          <Link href={personalizedName ? `/?name=${encodeURIComponent(personalizedName)}` : '/'} className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 text-sm text-brown transition-colors hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
             <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
             Invitation
           </Link>
