@@ -33,14 +33,34 @@ export function HallCinematic() {
     }, { rootMargin: '100% 0px' });
     loadObserver.observe(root);
 
+    const playVideo = () => {
+      if (!video.getAttribute('src')) {
+        video.src = VIDEO_SRC;
+        video.load();
+      }
+      video.play().catch(() => undefined);
+    };
+
     const ctx = gsap.context(() => {
       gsap.set('[data-door-caption]', { opacity: 1, y: 0 });
       doorTimeline = gsap.timeline({ paused: true })
         .to('[data-door-caption]', { opacity: 0, y: -22, duration: 0.4, ease: 'power1.in' }, 0.55)
         .to('[data-door="left"]', { rotateY: -112, duration: 1.7, ease: 'power2.inOut' }, 0.65)
         .to('[data-door="right"]', { rotateY: 112, duration: 1.7, ease: 'power2.inOut' }, 0.65)
+        .call(playVideo, [], 1.25)
         .to('[data-doors]', { autoAlpha: 0, duration: 0.45 }, 2.05);
     }, root);
+
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (doorTimeline.progress() < 1) doorTimeline.play();
+        else if (!video.ended) playVideo();
+      } else {
+        if (doorTimeline.progress() < 1) doorTimeline.pause();
+        video.pause();
+      }
+    }, { threshold: [0, 0.01] });
+    visibilityObserver.observe(root);
 
     const updateFromScroll = () => {
       frame = 0;
@@ -48,19 +68,17 @@ export function HallCinematic() {
       const scrollable = Math.max(root.offsetHeight - window.innerHeight, 1);
       const scrollProgress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
 
-      const doorProgress = Math.min(scrollProgress / 0.16, 1);
-      doorTimeline.progress(doorProgress);
-
-      const videoProgress = Math.min(Math.max((scrollProgress - 0.12) / 0.88, 0), 1);
-      const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : FALLBACK_DURATION;
-      const targetTime = videoProgress * duration;
-      if (video.readyState > 0 && Math.abs(video.currentTime - targetTime) > 0.025) video.currentTime = targetTime;
-
-      const sceneIndex = videoProgress > 0.015
-        ? Math.min(Math.floor(videoProgress * hallScenes.length), hallScenes.length - 1)
+      const textProgress = Math.min(Math.max((scrollProgress - 0.04) / 0.92, 0), 1);
+      const sceneIndex = textProgress > 0.01
+        ? Math.min(Math.floor(textProgress * hallScenes.length), hallScenes.length - 1)
         : -1;
       setActiveScene((current) => current === sceneIndex ? current : sceneIndex);
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${videoProgress})`;
+    };
+
+    const updateVideoProgress = () => {
+      const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : FALLBACK_DURATION;
+      const progress = Math.min(video.currentTime / duration, 1);
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
     };
 
     const requestUpdate = () => {
@@ -70,13 +88,16 @@ export function HallCinematic() {
     window.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate);
     video.addEventListener('loadedmetadata', requestUpdate);
+    video.addEventListener('timeupdate', updateVideoProgress);
     requestUpdate();
 
     return () => {
       window.removeEventListener('scroll', requestUpdate);
       window.removeEventListener('resize', requestUpdate);
       video.removeEventListener('loadedmetadata', requestUpdate);
+      video.removeEventListener('timeupdate', updateVideoProgress);
       loadObserver.disconnect();
+      visibilityObserver.disconnect();
       if (frame) window.cancelAnimationFrame(frame);
       video.pause();
       ctx.revert();
