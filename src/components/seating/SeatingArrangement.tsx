@@ -103,7 +103,7 @@ export function SeatingArrangement() {
 
   return (
     <main className="paper-texture min-h-screen bg-ivory text-brown">
-      <header className="border-b border-gold-soft/70 bg-champagne/70 px-5 py-5 backdrop-blur md:px-10">
+      <header className="sticky top-0 z-[60] border-b border-gold-soft/70 bg-champagne/95 px-5 py-4 shadow-sm backdrop-blur md:px-10">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <Link href="/" className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 text-sm text-brown transition-colors hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
             <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
@@ -120,7 +120,7 @@ export function SeatingArrangement() {
           <p className="mx-auto mt-4 max-w-xl text-brown-soft">ඔබගේ නම හෝ seat ID එක search කර, ඔබට වෙන් කළ table එක සහ seat එක සොයාගන්න.</p>
         </div>
 
-        <div className="sticky top-3 z-50 mx-auto mt-9 max-w-2xl rounded-[26px] border border-gold-soft bg-ivory/95 p-3 shadow-[0_18px_55px_-28px_rgba(86,51,35,0.45)] backdrop-blur">
+        <div className="sticky top-[76px] z-50 mx-auto mt-9 max-w-2xl rounded-[26px] border border-gold-soft bg-ivory/95 p-3 shadow-[0_18px_55px_-28px_rgba(86,51,35,0.45)] backdrop-blur">
           <form onSubmit={handleSearch} className="flex gap-2">
             <label htmlFor="guest-search" className="sr-only">Search guest name or seat ID</label>
             <div className="relative min-w-0 flex-1">
@@ -157,18 +157,19 @@ export function SeatingArrangement() {
         </div>
 
         {selected && (
-          <div className="mx-auto mt-6 grid max-w-xl grid-cols-2 gap-3 rounded-[26px] border border-gold bg-brown p-5 text-ivory shadow-[0_20px_60px_-35px_rgba(86,51,35,0.8)] md:grid-cols-[1fr_auto_auto] md:items-center md:text-left">
+          <div className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[70] mx-auto grid max-w-xl grid-cols-2 gap-2 rounded-[24px] border border-gold bg-brown p-3 text-ivory shadow-[0_20px_70px_rgba(35,16,10,0.48)] md:grid-cols-[1fr_auto_auto] md:items-center md:gap-3 md:p-4 md:text-left" role="status" aria-live="polite">
             <div className="col-span-2 md:col-span-1">
               <p className="text-xs uppercase tracking-[0.18em] text-gold-soft">Seat found</p>
-              <p className="mt-1 font-serif text-2xl">{selected.name}</p>
+              <p className="mt-0.5 font-serif text-xl md:text-2xl">{selected.name}</p>
+              <p className="mt-0.5 font-mono text-xs text-ivory/70">{selected.id}</p>
             </div>
-            <div className="rounded-2xl bg-ivory/10 px-5 py-3 text-center">
+            <div className="rounded-2xl bg-ivory/10 px-4 py-2 text-center md:px-5 md:py-3">
               <span className="block text-xs text-gold-soft">TABLE</span>
-              <strong className="font-serif text-3xl">{selected.table}</strong>
+              <strong className="font-serif text-2xl md:text-3xl">{selected.table}</strong>
             </div>
-            <div className="rounded-2xl bg-gold px-5 py-3 text-center text-brown">
+            <div className="rounded-2xl bg-gold px-4 py-2 text-center text-brown md:px-5 md:py-3">
               <span className="block text-xs">SEAT</span>
-              <strong className="font-serif text-3xl">{selected.seat}</strong>
+              <strong className="font-serif text-2xl md:text-3xl">{selected.seat}</strong>
             </div>
           </div>
         )}
