@@ -1,6 +1,7 @@
 import React from 'react';
+import { PhoneIcon } from 'lucide-react';
 import { useI18n } from '../../contexts/LanguageContext';
-import { assets } from '../../data/wedding';
+import { assets, wedding } from '../../data/wedding';
 import { FloatingPetals } from '../animation/FloatingPetals';
 import { FloralSprig } from '../animation/FloralSprig';
 import { OrnamentDivider } from '../animation/OrnamentDivider';
@@ -37,6 +38,30 @@ export function ThankYou() {
           {m.common.names}
         </p>
         <p className="mt-3 font-serif text-lg tracking-[0.25em] text-brown">{m.envelope.date}</p>
+
+        <div className="mx-auto mt-10 max-w-lg border-t border-gold-soft pt-8">
+          <p className="text-xs font-medium uppercase tracking-[0.24em] text-gold-deep">
+            {locale === 'si' ? 'සම්බන්ධ වන්න' : 'Contact Us'}
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {wedding.contacts.map((contact) => (
+              <a
+                key={contact.name}
+                href={`tel:${contact.phone}`}
+                aria-label={`Call ${contact.name} on ${contact.display}`}
+                className="group flex min-h-[64px] items-center justify-center gap-3 rounded-2xl border border-gold-soft bg-ivory/75 px-5 text-left shadow-sm transition-[transform,border-color,background-color] hover:border-gold hover:bg-ivory active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-champagne text-gold-deep transition-colors group-hover:bg-gold group-hover:text-brown">
+                  <PhoneIcon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block font-serif text-lg leading-tight text-brown">{contact.name}</span>
+                  <span className="mt-0.5 block text-sm tracking-[0.08em] text-brown-soft">{contact.display}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
       </Reveal>
       <p className="relative mt-20 text-xs text-brown-soft">{m.thanks.footer}</p>
     </section>);

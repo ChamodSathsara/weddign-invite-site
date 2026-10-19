@@ -17,6 +17,10 @@ export const wedding = {
     /** Only set when you have a verified Google Maps embed URL for the exact venue. */
     mapEmbedUrl: null as string | null
   },
+  contacts: [
+    { name: 'Chamod', display: '075 880 6437', phone: '+94758806437' },
+    { name: 'Samanali', display: '071 180 2628', phone: '+94711802628' }
+  ],
   /** Leave null to hide the dress code row entirely. */
   dressCode: null as null | {en: string;si: string;},
   rsvp: {
