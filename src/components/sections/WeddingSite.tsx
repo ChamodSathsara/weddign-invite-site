@@ -43,7 +43,7 @@ export function WeddingSite({ guest }: {guest: Guest;}) {
         <OurStory />
         <EventDetails />
         <Venue />
-        <RsvpSection token={guest.token} guestName={guest.name} />
+        <RsvpSection />
         <ThankYou />
       </main>
       <BottomNav active={active} />
