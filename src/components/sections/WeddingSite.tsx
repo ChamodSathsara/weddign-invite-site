@@ -44,7 +44,7 @@ export function WeddingSite({ guest }: {guest: Guest;}) {
         <EventDetails />
         <Venue />
         <RsvpSection token={guest.token} guestName={guest.name} />
-        <ThankYou />
+        <ThankYou guestName={guest.name} />
       </main>
       <BottomNav active={active} />
     </motion.div>);

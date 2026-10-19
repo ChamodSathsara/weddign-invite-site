@@ -5,9 +5,10 @@ import { assets, wedding } from '../../data/wedding';
 import { FloatingPetals } from '../animation/FloatingPetals';
 import { FloralSprig } from '../animation/FloralSprig';
 import { OrnamentDivider } from '../animation/OrnamentDivider';
+import { PhysicalInvitationDownload } from '../invitation/PhysicalInvitationDownload';
 import { Reveal } from '../animation/Reveal';
 
-export function ThankYou() {
+export function ThankYou({ guestName }: { guestName: string | null }) {
   const { m, locale } = useI18n();
   return (
     <section aria-labelledby="thanks-title" className="warm-glow relative overflow-hidden bg-champagne/60 px-5 pb-36 pt-24 text-center md:pb-24 md:pt-32">
@@ -38,6 +39,7 @@ export function ThankYou() {
           {m.common.names}
         </p>
         <p className="mt-3 font-serif text-lg tracking-[0.25em] text-brown">{m.envelope.date}</p>
+        <PhysicalInvitationDownload guestName={guestName} />
 
         <div className="mx-auto mt-10 max-w-lg border-t border-gold-soft pt-8">
           <p className="text-xs font-medium uppercase tracking-[0.24em] text-gold-deep">
