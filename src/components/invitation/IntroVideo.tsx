@@ -78,7 +78,7 @@ export function IntroVideo({ onDone }: {onDone: () => void;}) {
   return (
     <motion.section
       aria-label={m.intro.label}
-      className="fixed inset-0 z-50 bg-brown"
+      className="fixed inset-0 z-50 h-[100dvh] w-[100dvw] overflow-hidden bg-brown"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}>
@@ -93,7 +93,7 @@ export function IntroVideo({ onDone }: {onDone: () => void;}) {
         disablePictureInPicture
         controls={false}
         aria-hidden="true"
-        className="h-full w-full object-cover [@media(orientation:portrait)]:object-contain" />
+        className="absolute inset-0 h-full w-full object-cover" />
       
 
       {!playing &&
