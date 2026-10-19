@@ -72,7 +72,7 @@ export const si: Messages = {
       archway: { title: 'මල් ආරුක්කුව හරහා', caption: 'පිච්ච සහ රෝස මල් ඔබට මඟ පෙන්වයි.' },
       corridor: { title: 'උණුසුම් ආලෝකය', caption: 'පහන් කූඩු අපගේ සැමරුමට මඟ ආලෝකමත් කරයි.' },
       aisle: { title: 'මංගල මාවත', caption: 'සෑම පියවරක්ම සුදු මලින් සැරසී ඇත.' },
-      poruwa: { title: 'පෝරුව', caption: 'උදෑසන 9:30ට ජීවිත දෙකක් එක්වන පූජනීය තැන.' },
+      poruwa: { title: 'පෝරුව', caption: 'උදෑසන 9:28ට ජීවිත දෙකක් එක්වන පූජනීය තැන.' },
       celebration: { title: 'අප සමඟ සමරන්න', caption: 'ආදරය, සිනහව සහ ආශිර්වාදයෙන් පිරි දිනයක්.' }
     }
   },
@@ -120,7 +120,7 @@ export const si: Messages = {
     timeLabel: 'උත්සව කාලය',
     timeValue: 'පෙ.ව. 9:00 – ප.ව. 3:30',
     ceremonyLabel: 'පෝරුව චාරිත්‍රය',
-    ceremonyValue: 'පෙ.ව. 9:30',
+    ceremonyValue: 'පෙ.ව. 9:28',
     venueLabel: 'ස්ථානය',
     venueValue: 'Deandra Bolgoda, පිළියන්දල',
     dressCodeLabel: 'ඇඳුම් විලාසය',

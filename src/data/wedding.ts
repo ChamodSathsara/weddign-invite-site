@@ -9,7 +9,7 @@ export const wedding = {
   /** Calendar date of the wedding in Asia/Colombo (YYYY-MM-DD) */
   dateKey: '2027-01-20',
   startISO: '2027-01-20T09:00:00+05:30',
-  ceremonyISO: '2027-01-20T09:30:00+05:30',
+  ceremonyISO: '2027-01-20T09:28:00+05:30',
   endISO: '2027-01-20T15:30:00+05:30',
   venue: {
     name: 'Deandra Bolgoda',
@@ -34,6 +34,8 @@ export const wedding = {
 
 export const assets = {
   couple: "/Romantic_South_Asian_Wedding_Portrait.png",
+
+  venue: "/venue-wedding-hall.png",
 
   introVideo: "/Couple_creating_wedding_cartoon_\u2026_20261017003218.mp4",
 

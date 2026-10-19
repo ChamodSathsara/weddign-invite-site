@@ -70,7 +70,7 @@ export const en = {
       archway: { title: 'Through the flowers', caption: 'Jasmine and roses lead the way in.' },
       corridor: { title: 'A warm glow', caption: 'Chandeliers light the path to our celebration.' },
       aisle: { title: 'The aisle', caption: 'Ivory blooms line every step.' },
-      poruwa: { title: 'The Poruwa', caption: 'Where two lives become one, at 9:30 in the morning.' },
+      poruwa: { title: 'The Poruwa', caption: 'Where two lives become one, at 9:28 in the morning.' },
       celebration: { title: 'Celebrate with us', caption: 'A day of love, laughter and blessings.' }
     }
   },
@@ -118,7 +118,7 @@ export const en = {
     timeLabel: 'Celebration',
     timeValue: '9:00 AM – 3:30 PM',
     ceremonyLabel: 'Poruwa Ceremony',
-    ceremonyValue: '9:30 AM',
+    ceremonyValue: '9:28 AM',
     venueLabel: 'Venue',
     venueValue: 'Deandra Bolgoda, Piliyandala',
     dressCodeLabel: 'Dress Code',

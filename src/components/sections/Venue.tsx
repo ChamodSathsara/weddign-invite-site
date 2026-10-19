@@ -1,16 +1,13 @@
 import React from 'react';
 import { ExternalLinkIcon, NavigationIcon, ShieldCheckIcon } from 'lucide-react';
 import { useI18n } from '../../contexts/LanguageContext';
-import { hallScenes } from '../../data/hallScenes';
-import { wedding } from '../../data/wedding';
+import { assets, wedding } from '../../data/wedding';
 import { Reveal } from '../animation/Reveal';
 import { OrnamentDivider } from '../animation/OrnamentDivider';
 import { GoldCorners } from '../animation/GoldCorners';
 
 export function Venue() {
   const { m } = useI18n();
-  const aisle = hallScenes.find((s) => s.id === 'aisle') ?? hallScenes[0];
-
   return (
     <section id="location" aria-labelledby="location-title" className="relative bg-ivory px-5 py-20 md:px-10 md:py-32">
       <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
@@ -67,13 +64,13 @@ export function Venue() {
           <figure className="relative">
               <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[26px] border border-gold bg-champagne">
                 <img
-                src={aisle.src}
+                src={assets.venue}
                 alt={m.venue.imageAlt}
                 width={1200}
                 height={900}
                 loading="lazy"
                 decoding="async"
-                className="aspect-[4/5] w-full scale-[1.08] object-cover" />
+                className="aspect-[4/3] w-full object-cover" />
               
                 <GoldCorners className="opacity-80" />
               </div>
